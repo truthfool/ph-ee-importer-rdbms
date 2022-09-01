@@ -22,9 +22,11 @@ public class InflightTransferManager {
 
     public void transferStarted(Long workflowInstanceKey, Long timestamp, String direction) {
         Transfer transfer = getOrCreateTransfer(workflowInstanceKey);
+        Date date=new Date(timestamp);
+        logger.info("Started at date:{}",date);
         if (transfer.getStartedAt() == null) {
             transfer.setDirection(direction);
-            transfer.setStartedAt(new Date(timestamp));
+            transfer.setStartedAt(date);
             transferRepository.save(transfer);
         } else {
             logger.debug("transfer {} already started at {}", workflowInstanceKey, transfer.getStartedAt());
@@ -34,6 +36,7 @@ public class InflightTransferManager {
     public void transferEnded(Long workflowInstanceKey, Long timestamp) {
         synchronized (inflightTransfers) {
             Transfer transfer = inflightTransfers.remove(workflowInstanceKey);
+
             if (transfer == null) {
                 logger.error("failed to remove in-flight transfer {}", workflowInstanceKey);
                 transfer = transferRepository.findByWorkflowInstanceKey(workflowInstanceKey);
@@ -42,7 +45,9 @@ public class InflightTransferManager {
                     return;
                 }
             }
-            transfer.setCompletedAt(new Date(timestamp));
+            Date endTime=new Date(timestamp);
+            logger.info("End time : {}",endTime);
+            transfer.setCompletedAt(endTime);
             transferRepository.save(transfer);
             logger.debug("transfer finished {}", transfer.getWorkflowInstanceKey());
         }
