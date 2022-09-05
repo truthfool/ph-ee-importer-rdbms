@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class TempDocumentStore {
 
-    private final Map<Long, List<DocumentContext>> tempVariableEvents = new HashMap<>();
+    private final Map<Long, List<DocumentContext>> tempVariableEvents = new ConcurrentHashMap<>();
     private final Map<Long, String> workflowkeyBpmnAccociations = new ConcurrentHashMap<>();
 
     private final Map<Long, String> workflowKeyBatchFileNameAssociations = new HashMap<>();
