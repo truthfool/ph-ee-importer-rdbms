@@ -10,12 +10,13 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class InflightBatchManager {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final Map<Long, Batch> inflightBatches = new HashMap<>();
+    private final Map<Long, Batch> inflightBatches = new ConcurrentHashMap<>();
 
     @Autowired
     private BatchRepository batchRepository;
