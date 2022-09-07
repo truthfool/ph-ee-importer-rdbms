@@ -10,12 +10,13 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class InflightTransactionRequestManager {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final Map<Long, TransactionRequest> inflightTransactionRequests = new HashMap<>();
+    private final Map<Long, TransactionRequest> inflightTransactionRequests = new ConcurrentHashMap<>();
 
     @Autowired
     private TransactionRequestRepository transactionRequestRepository;

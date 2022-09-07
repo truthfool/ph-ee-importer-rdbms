@@ -40,6 +40,7 @@ public class KafkaConsumer implements ConsumerSeekAware {
 
     @KafkaListener(topics = "${importer.kafka.topic}")
     public void listen(String rawData) {
+        logger.info("Raw Data : {}",rawData);
         Long startTime = System.currentTimeMillis();
         try {
             DocumentContext incomingRecord = JsonPathReader.parse(rawData);

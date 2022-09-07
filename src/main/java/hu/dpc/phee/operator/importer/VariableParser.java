@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static hu.dpc.phee.operator.OperatorUtils.strip;
@@ -32,9 +33,9 @@ public class VariableParser {
     private String outgoingDirection;
 
     private final Logger logger = LoggerFactory.getLogger(VariableParser.class);
-    private final Map<String, Consumer<Pair<Transfer, String>>> transferParsers = new HashMap<>();
-    private final Map<String, Consumer<Pair<TransactionRequest, String>>> transactionRequestParsers = new HashMap<>();
-    private final Map<String, Consumer<Pair<Batch, String>>> batchParsers = new HashMap<>();
+    private final Map<String, Consumer<Pair<Transfer, String>>> transferParsers = new ConcurrentHashMap<>();
+    private final Map<String, Consumer<Pair<TransactionRequest, String>>> transactionRequestParsers = new ConcurrentHashMap<>();
+    private final Map<String, Consumer<Pair<Batch, String>>> batchParsers = new ConcurrentHashMap<>();
 
     public VariableParser() {
         transferParsers.put("localQuoteResponse", pair -> parseTransferLocalQuoteResponse(pair.getFirst(), strip(pair.getSecond())));
