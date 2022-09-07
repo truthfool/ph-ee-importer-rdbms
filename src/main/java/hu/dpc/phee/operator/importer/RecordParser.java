@@ -81,6 +81,7 @@ public class RecordParser {
         logger.debug("newVariable in RecordParser: {}", newVariable.jsonString()); //
         String name = newVariable.read("$.value.name");
         Long workflowInstanceKey = newVariable.read("$.value.processInstanceKey");
+        logger.debug("Workflow instance key in addVariableToEntity: {}",workflowInstanceKey);
         if (inflightCallActivities.containsKey(workflowInstanceKey)) {
             Long parentInstanceKey = inflightCallActivities.get(workflowInstanceKey);
             logger.debug("variable {} in instance {} has parent workflowInstance {}", name, workflowInstanceKey, parentInstanceKey);
@@ -107,6 +108,7 @@ public class RecordParser {
                 if(transactionRequest.getDirection() == null) {
                     transactionRequest.setDirection(bpmnProcess.getDirection());
                 }
+                logger.debug("Add Variable To Entity Workflow Key : {}",workflowInstanceKey);
                 transactionRequestRepository.save(transactionRequest);
             }
         } else if (batchType.equals(bpmnProcess.getType())) {
