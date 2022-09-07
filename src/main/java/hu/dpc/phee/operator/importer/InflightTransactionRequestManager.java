@@ -29,6 +29,7 @@ public class InflightTransactionRequestManager {
         if (transactionRequest.getStartedAt() == null) {
             transactionRequest.setDirection(direction);
             transactionRequest.setStartedAt(new Date(timestamp));
+            logger.debug("Transaction Request Started Workflow Key : {}",workflowInstanceKey);
             transactionRequestRepository.save(transactionRequest);
             logger.debug("started in-flight {} transactionRequest {}", transactionRequest.getDirection(), transactionRequest.getWorkflowInstanceKey());
         } else {
@@ -49,7 +50,7 @@ public class InflightTransactionRequestManager {
             }
 
             transactionRequest.setCompletedAt(new Date(timestamp));
-
+            logger.debug("Transaction Request Ended Workflow Key : {}",workflowInstanceKey);
             transactionRequestRepository.save(transactionRequest);
             tempDocumentStore.deleteDocument(workflowInstanceKey);
             logger.debug("transactionRequest {} finished", transactionRequest.getWorkflowInstanceKey());
