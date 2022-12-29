@@ -98,18 +98,22 @@ public class KafkaConsumer implements ConsumerSeekAware {
                     logger.info("Processing document of type {}", valueType);
                     switch (valueType) {
                         case "VARIABLE":
+                            logger.info("Variable Type");
                             DocumentContext processedVariable = recordParser.processVariable(doc); // TODO prepare for parent workflow
                             recordParser.addVariableToEntity(processedVariable, bpmnprocessId); // Call to store transfer
                             break;
                         case "JOB":
+                            logger.info("Job Type");
                             recordParser.processTask(doc);
                             break;
                         case "PROCESS_INSTANCE":
+                            logger.info("Process Instance Type");
                             if ("PROCESS".equals(doc.read("$.value.bpmnElementType"))) {
                                 recordParser.processWorkflowInstance(doc);
                             }
                             break;
                         case "INCIDENT":
+                            logger.info("Incident Type");
                             logger.info("Doc {}", incomingRecord.jsonString());
                             break;
                     }
