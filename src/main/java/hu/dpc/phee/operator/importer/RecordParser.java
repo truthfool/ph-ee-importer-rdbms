@@ -161,6 +161,7 @@ public class RecordParser {
         }
         else {
             logger.debug("Skip adding variable to {} and type is {}", bpmnProcessId, bpmnProcess.getType()); // xx
+            //  Skip adding variable to gsma_base_transaction and type is UNKNOWN // P2P
         }
     }
 
@@ -192,6 +193,7 @@ public class RecordParser {
     public void processWorkflowInstance(DocumentContext json) {
         String bpmnProcessId = json.read("$.value.bpmnProcessId");
         BpmnProcess bpmnProcess = bpmnProcessProperties.getById(bpmnProcessId.split("-")[0]);
+        logger.info("BPMN Process Id: {}",bpmnProcessId.split("-")[0]);
         Long workflowInstanceKey = json.read("$.value.processInstanceKey");
         Long timestamp = json.read("$.timestamp");
         String intent = json.read("$.intent");
