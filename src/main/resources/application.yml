@@ -88,7 +88,7 @@ bpmn:
     - id: "gsma_base_transaction"
       direction: "${bpmn.outgoing-direction}"
       type: "${bpmn.transfer-type}"
-    - id : "inbound-transfer-paygops-lion"
+    - id : "paybill"
       direction: "${bpmn.incoming-direction}"
       type: "${bpmn.transfer-type}"
 
