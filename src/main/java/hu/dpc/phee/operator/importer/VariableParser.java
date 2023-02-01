@@ -53,8 +53,6 @@ public class VariableParser {
         transferParsers.put("batchId", pair -> pair.getFirst().setBatchId(strip(pair.getSecond())));
         transferParsers.put("clientCorrelationId", pair -> parseClientCorrelationIdTransfers(pair.getFirst(), pair.getSecond()));
 
-
-
         transactionRequestParsers.put("authType", pair -> pair.getFirst().setAuthType(strip(pair.getSecond())));
         transactionRequestParsers.put("transactionId", pair -> pair.getFirst().setTransactionId(strip(pair.getSecond())));
         transactionRequestParsers.put("partyLookupFspId", pair -> pair.getFirst().setPayerDfspId(strip(pair.getSecond())));
@@ -90,6 +88,7 @@ public class VariableParser {
         batchParsers.put("completedAmount", pair -> pair.getFirst().setCompletedAmount(Long.parseLong(pair.getSecond())));
         batchParsers.put("resultFile", pair -> pair.getFirst().setResult_file(strip(pair.getSecond())));
         batchParsers.put("paymentMode", pair -> pair.getFirst().setPaymentMode(strip(pair.getSecond())));
+
     }
 
     public Map<String, Consumer<Pair<Transfer, String>>> getTransferParsers() {
@@ -200,7 +199,7 @@ public class VariableParser {
 
     private void parseChannelRequest(Transfer transfer, String jsonString) {
         DocumentContext json = JsonPathReader.parseEscaped(jsonString);
-
+        logger.info("I reached here");
         transfer.setPayerPartyId(json.read("$.payer.partyIdInfo.partyIdentifier"));
         transfer.setPayerPartyIdType(json.read("$.payer.partyIdInfo.partyIdType"));
 
