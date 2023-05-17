@@ -120,6 +120,8 @@ public class RecordParser {
                 String value = newVariable.read("$.value.value");
 
                 Transfer transfer = inflightTransferManager.getOrCreateTransfer(workflowInstanceKey);
+                logger.info("Value:{}",value);
+                logger.info("Transfer Status :{}",transfer.getStatus());
                 variableParser.getTransferParsers().get(name).accept(Pair.of(transfer, value));
                 transferRepository.save(transfer);
             }

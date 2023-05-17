@@ -52,6 +52,7 @@ public class VariableParser {
             parseTransferCreateFailed(pair.getFirst(), pair.getSecond());});
         transferParsers.put("batchId", pair -> pair.getFirst().setBatchId(strip(pair.getSecond())));
         transferParsers.put("clientCorrelationId", pair -> parseClientCorrelationIdTransfers(pair.getFirst(), pair.getSecond()));
+        transferParsers.put("transferState", pair -> parseTransferState(pair.getFirst(), pair.getSecond()));
 
 
 
@@ -307,6 +308,11 @@ public class VariableParser {
     private void parseTransActionState(TransactionRequest transactionRequest, String jsonString) {
         if(incomingDirection.equals(transactionRequest.getDirection())) {
             transactionRequest.setState(TransactionRequestState.valueOf(strip(jsonString)));
+        }
+    }
+    private void parseTransferState(Transfer transferRequest, String jsonString) {
+        if(incomingDirection.equals(transferRequest.getDirection())) {
+            transferRequest.setStatus(TransferStatus.valueOf(strip(jsonString)));
         }
     }
 
