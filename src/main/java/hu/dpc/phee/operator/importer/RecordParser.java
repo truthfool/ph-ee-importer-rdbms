@@ -112,11 +112,11 @@ public class RecordParser {
             logger.debug("variable {} in instance {} has parent workflowInstance {}", name, workflowInstanceKey, parentInstanceKey);
             workflowInstanceKey = parentInstanceKey;
         }
-
+        logger.info("Name 1 : {}",name);
         BpmnProcess bpmnProcess = bpmnProcessProperties.getById(bpmnProcessId);
         if (transferType.equals(bpmnProcess.getType())) {
             if (variableParser.getTransferParsers().containsKey(name)) {
-                logger.debug("add variable {} to transfer for workflow {}", name, workflowInstanceKey);
+                logger.info("add variable {} to transfer for workflow {}", name, workflowInstanceKey);
                 String value = newVariable.read("$.value.value");
 
                 Transfer transfer = inflightTransferManager.getOrCreateTransfer(workflowInstanceKey);
@@ -125,7 +125,7 @@ public class RecordParser {
             }
         } else if (transactionRequestType.equals(bpmnProcess.getType())) {
             if (variableParser.getTransactionRequestParsers().containsKey(name)) {
-                logger.debug("add variable to transactionRequest {} for workflow {}", name, workflowInstanceKey);
+                logger.info("add variable to transactionRequest {} for workflow {}", name, workflowInstanceKey);
                 String value = newVariable.read("$.value.value");
 
                 TransactionRequest transactionRequest = inflightTransactionRequestManager.getOrCreateTransactionRequest(workflowInstanceKey);
@@ -137,7 +137,7 @@ public class RecordParser {
             }
         } else if (batchType.equals(bpmnProcess.getType())) {
             if (variableParser.getBatchParsers().containsKey(name)) {
-                logger.debug("add variable {} to batch for workflow {}", name, workflowInstanceKey);
+                logger.info("add variable {} to batch for workflow {}", name, workflowInstanceKey);
                 String value = newVariable.read("$.value.value");
 
                 Batch batch = inflightBatchManager.getOrCreateBatch(workflowInstanceKey);
@@ -171,7 +171,7 @@ public class RecordParser {
             if (existingVariables.stream().filter(existing -> {
                 return name.equals(existing.getName()) && newTimestamp <= existing.getTimestamp(); // variable already inserted before
             }).findFirst().orElse(null) != null) {
-                logger.debug("Variable {} already inserted at {} for instance {}, skip processing!", name, newTimestamp, workflowInstanceKey);
+                logger.info("Variable {} already inserted at {} for instance {}, skip processing!", name, newTimestamp, workflowInstanceKey);
                 return null;
             }
         }
