@@ -179,6 +179,7 @@ public class VariableParser {
         SimpleDateFormat dateFormat = OperatorUtils.dateFormat();
         try {
             transfer.setCompletedAt(dateFormat.parse(completedAt));
+            transfer.setStatus(TransferStatus.valueOf(strip(jsonString)));
         } catch (ParseException e) {
             logger.error("failed to parse completedTimestamp", e);
         }
