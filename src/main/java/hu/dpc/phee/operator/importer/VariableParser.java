@@ -193,10 +193,19 @@ public class VariableParser {
         DocumentContext json = JsonPathReader.parseEscaped(jsonString);
         String completedAt = json.read("$.completedTimestamp", String.class);
         SimpleDateFormat dateFormat = OperatorUtils.dateFormat();
+        logger.info("Entire Transfer Body:{}",transfer);
+        logger.info("Json String:{}",jsonString);
         try {
             transfer.setCompletedAt(dateFormat.parse(completedAt));
         } catch (ParseException e) {
             logger.error("failed to parse completedTimestamp", e);
+        }
+    }
+    private void parseTransferState(Transfer transfer, String jsonString) {
+        try{
+            transfer.setStatus(TransferStatus.valueOf(strip(jsonString)));
+        } catch (IllegalArgumentException e){
+            logger.error("Incorrect Transfer Status",e);
         }
     }
 
@@ -311,11 +320,5 @@ public class VariableParser {
             transactionRequest.setState(TransactionRequestState.valueOf(strip(jsonString)));
         }
     }
-    private void parseTransferState(Transfer transferRequest, String jsonString) {
-        if(incomingDirection.equals(transferRequest.getDirection())) {
-            transferRequest.setStatus(TransferStatus.valueOf(strip(jsonString)));
-        }
-    }
-
 
 }

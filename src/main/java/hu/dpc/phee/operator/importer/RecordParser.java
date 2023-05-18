@@ -112,16 +112,20 @@ public class RecordParser {
             logger.debug("variable {} in instance {} has parent workflowInstance {}", name, workflowInstanceKey, parentInstanceKey);
             workflowInstanceKey = parentInstanceKey;
         }
-        logger.info("Name 1 : {}",name);
+
         BpmnProcess bpmnProcess = bpmnProcessProperties.getById(bpmnProcessId);
+        logger.info("bpmnProcess Type : {}",bpmnProcess.getType());
+        logger.info("Name 1 : {}",name);
+        logger.info("Transfer Type : {}",transferType);
+
         if (transferType.equals(bpmnProcess.getType())) {
             if (variableParser.getTransferParsers().containsKey(name)) {
                 logger.info("add variable {} to transfer for workflow {}", name, workflowInstanceKey);
                 String value = newVariable.read("$.value.value");
 
                 Transfer transfer = inflightTransferManager.getOrCreateTransfer(workflowInstanceKey);
-                logger.info("Value:{}",value);
-                logger.info("Transfer Status :{}",transfer.getStatus());
+                logger.info("Value 1 :{}",value);
+                logger.info("Transfer Status 1 :{}",transfer.getStatus());
                 variableParser.getTransferParsers().get(name).accept(Pair.of(transfer, value));
                 transferRepository.save(transfer);
             }
