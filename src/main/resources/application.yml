@@ -44,8 +44,8 @@ cloud:
   aws:
     enabled: true
     credentials:
-      access-key: ${AWS_ACCESS_KEY:AKIAX32JM37TZOJ5AKFB}
-      secret-key: ${AWS_SECRET_KEY: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}
+      access-key: ${AWS_ACCESS_KEY:access_key_from_aws}
+      secret-key: ${AWS_SECRET_KEY:secret_key_from_aws}
     region:
       static: us-east-2
 
@@ -89,11 +89,45 @@ bpmn:
     - id: "mpesa_flow_roster"
       direction: "${bpmn.incoming-direction}"
       type: "${bpmn.transaction-request-type}"
-    - id: "mpesa_flow-paygops"
+    - id: "mpesa_flow_paygops"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transaction-request-type}"
+    - id: "mpesa_flow_tupande"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transaction-request-type}"
+    - id: "mpesa_flow_erply"
       direction: "${bpmn.incoming-direction}"
       type: "${bpmn.transaction-request-type}"
     - id: "slcb"
       direction: "UNKNOWN"
       type: "${bpmn.batch-type}"
+    - id: "gsma_base_transaction"
+      direction: "${bpmn.outgoing-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "inbound_transfer_paygops"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "inbound_transfer_roster"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "inbound_transfer_mifos"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "inbound_transfer_tupande"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "inbound_transfer_erply"
+      direction: "${bpmn.incoming-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "mock_payment_transfer"
+      direction: "${bpmn.outgoing-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "mock_payer_fund_transfer"
+      direction: "${bpmn.outgoing-direction}"
+      type: "${bpmn.transfer-type}"
+    - id: "mock_payment_transfer_debit"
+      direction: "${bpmn.outgoing-direction}"
+      type: "${bpmn.transfer-type}"
+
 
 
