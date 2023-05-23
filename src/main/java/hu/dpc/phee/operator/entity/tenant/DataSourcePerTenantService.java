@@ -33,7 +33,6 @@ import java.util.Map;
 
 @Service
 public class DataSourcePerTenantService implements DisposableBean {
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final Map<Long, DataSource> tenantToDataSourceMap = new HashMap<>();
 
@@ -65,29 +64,41 @@ public class DataSourcePerTenantService implements DisposableBean {
         DataSource tenantDataSource;
 
         final TenantServerConnection tenant = ThreadLocalContextUtil.getTenant();
+        logger.trace("Retrieving datasource for tenant: {}", tenant);
+
         if (tenant != null) {
-            synchronized (this.tenantToDataSourceMap) {
-                if (this.tenantToDataSourceMap.containsKey(tenant.getId())) {
-                    tenantDataSource = this.tenantToDataSourceMap.get(tenant.getId());
-                } else {
-                    tenantDataSource = createNewDataSourceFor(tenant);
-                    this.tenantToDataSourceMap.put(tenant.getId(), tenantDataSource);
+            if (this.tenantToDataSourceMap.containsKey(tenant.getId())) {
+                tenantDataSource = this.tenantToDataSourceMap.get(tenant.getId());
+            } else {
+                synchronized (this.tenantToDataSourceMap) {
+                    if (this.tenantToDataSourceMap.containsKey(tenant.getId())) {
+                        return this.tenantToDataSourceMap.get(tenant.getId());
+                    } else {
+                        logger.info("Creating new datasource for tenant: {}", tenant);
+                        tenantDataSource = createNewDataSourceFor(tenant);
+                        this.tenantToDataSourceMap.put(tenant.getId(), tenantDataSource);
+                    }
                 }
             }
         } else {
-            synchronized (this.tenantToDataSourceMap) {
-                long defaultConnectionKey = 0;
-                if (this.tenantToDataSourceMap.containsKey(defaultConnectionKey)) {
-                    tenantDataSource = this.tenantToDataSourceMap.get(defaultConnectionKey);
-                } else {
-                    TenantServerConnection defaultConnection = new TenantServerConnection();
-                    defaultConnection.setSchemaServer(defaultHostname);
-                    defaultConnection.setSchemaServerPort(String.valueOf(defaultPort));
-                    defaultConnection.setSchemaName(defaultSchema);
-                    defaultConnection.setSchemaUsername(defaultUsername);
-                    defaultConnection.setSchemaPassword(defaultPassword);
-                    tenantDataSource = createNewDataSourceFor(defaultConnection);
-                    this.tenantToDataSourceMap.put(defaultConnectionKey, tenantDataSource);
+            long defaultConnectionKey = 0;
+            if (this.tenantToDataSourceMap.containsKey(defaultConnectionKey)) {
+                tenantDataSource = this.tenantToDataSourceMap.get(defaultConnectionKey);
+            } else {
+                synchronized (this.tenantToDataSourceMap) {
+                    if (this.tenantToDataSourceMap.containsKey(defaultConnectionKey)) {
+                        return this.tenantToDataSourceMap.get(tenant.getId());
+                    } else {
+                        logger.info("Creating new datasource for default connection");
+                        TenantServerConnection defaultConnection = new TenantServerConnection();
+                        defaultConnection.setSchemaServer(defaultHostname);
+                        defaultConnection.setSchemaServerPort(String.valueOf(defaultPort));
+                        defaultConnection.setSchemaName(defaultSchema);
+                        defaultConnection.setSchemaUsername(defaultUsername);
+                        defaultConnection.setSchemaPassword(defaultPassword);
+                        tenantDataSource = createNewDataSourceFor(defaultConnection);
+                        this.tenantToDataSourceMap.put(defaultConnectionKey, tenantDataSource);
+                    }
                 }
             }
         }
@@ -97,10 +108,10 @@ public class DataSourcePerTenantService implements DisposableBean {
 
     private DataSource createNewDataSourceFor(TenantServerConnection tenant) {
         HikariConfig config = new HikariConfig();
+        int port = Integer.parseInt(tenant.getSchemaServerPort());
+        config.setJdbcUrl(createJdbcUrl(jdbcProtocol, jdbcSubprotocol, tenant.getSchemaServer(), port, tenant.getSchemaName()));
         config.setUsername(tenant.getSchemaUsername());
         config.setPassword(tenant.getSchemaPassword());
-        config.setJdbcUrl(createJdbcUrl(jdbcProtocol, jdbcSubprotocol, tenant.getSchemaServer(),
-                Integer.parseInt(tenant.getSchemaServerPort()), tenant.getSchemaName()));
         config.setAutoCommit(false);
         config.setConnectionInitSql("SELECT 1");
         config.setValidationTimeout(30000);
@@ -111,21 +122,12 @@ public class DataSourcePerTenantService implements DisposableBean {
         config.setMaximumPoolSize(20);
         config.setMinimumIdle(5);
         config.setPoolName(tenant.getSchemaName() + "Pool");
+        logger.info("Hikari pool created for tenant: {}", tenant);
         return new HikariDataSource(config);
     }
 
     private String createJdbcUrl(String jdbcProtocol, String jdbcSubprotocol, String hostname, int port, String dbName) {
-        return new StringBuilder()
-                .append(jdbcProtocol)
-                .append(':')
-                .append(jdbcSubprotocol)
-                .append("://")
-                .append(hostname)
-                .append(':')
-                .append(port)
-                .append('/')
-                .append(dbName)
-                .toString();
+        return jdbcProtocol + ':' + jdbcSubprotocol + "://" + hostname + ':' + port + '/' + dbName;
     }
 
     @Override
