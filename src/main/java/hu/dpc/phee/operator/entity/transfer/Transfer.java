@@ -4,7 +4,9 @@ package hu.dpc.phee.operator.entity.transfer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.With;
 
 import java.math.BigDecimal;

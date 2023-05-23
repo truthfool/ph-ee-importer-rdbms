@@ -2,6 +2,8 @@ package hu.dpc.phee.operator.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,6 +33,17 @@ public class TransferTransformerConfig {
         private String direction;
         private List<Transformer> transformers;
 
+        public String getName() {
+            return name;
+        }
+
+        public String getDirection() {
+            return direction;
+        }
+
+        public List<Transformer> getTransformers() {
+            return transformers;
+        }
     }
 
     @Data
@@ -40,6 +53,26 @@ public class TransferTransformerConfig {
         private String jsonPath;
         private String constant;
         private String xpath;
+
+        public String getField() {
+            return field;
+        }
+
+        public String getVariableName() {
+            return variableName;
+        }
+
+        public String getJsonPath() {
+            return jsonPath;
+        }
+
+        public String getConstant() {
+            return constant;
+        }
+
+        public String getXpath() {
+            return xpath;
+        }
     }
 
     public Optional<Flow> findFlow(String name) {
