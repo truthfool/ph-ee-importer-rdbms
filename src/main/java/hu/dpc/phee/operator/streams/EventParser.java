@@ -185,9 +185,10 @@ public class EventParser {
             default -> throw new IllegalStateException("Unexpected event type: " + valueType);
         };
 
-        if (entities.size() != 0) {
+        if (!entities.isEmpty()) {
             logger.info("Saving {} entities", entities.size());
-            entities.forEach(entity -> {
+
+            for (Object entity : entities) {
                 if (entity instanceof Variable) {
                     variableRepository.save((Variable) entity);
                 } else if (entity instanceof Task) {
@@ -195,7 +196,7 @@ public class EventParser {
                 } else {
                     throw new IllegalStateException("Unexpected entity type: " + entity.getClass());
                 }
-            });
+            }
             transferRepository.save(transfer);
         }
     }
